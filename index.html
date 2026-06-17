@@ -6,119 +6,261 @@
 <title>FutureFits</title>
 
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
 body{
-    margin:0;
-    overflow:hidden;
-    background:#111;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:
+linear-gradient(135deg,#0f172a,#1e293b,#334155);
+padding:30px;
 }
 
-canvas{
-    display:block;
+.container{
+width:100%;
+max-width:1200px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:30px;
 }
 
-#logo{
-    position:absolute;
-    top:20px;
-    left:20px;
-    color:white;
-    font-size:30px;
-    font-family:Arial;
-    font-weight:bold;
+.glass{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,0.15);
+border-radius:25px;
+padding:30px;
+box-shadow:0 8px 32px rgba(0,0,0,.3);
 }
+
+h1{
+color:white;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+color:white;
+margin-top:15px;
+margin-bottom:5px;
+}
+
+input,select{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:rgba(255,255,255,.1);
+color:white;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:20px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+font-weight:bold;
+font-size:16px;
+background:#38bdf8;
+color:white;
+}
+
+.preview{
+display:flex;
+justify-content:center;
+align-items:center;
+height:600px;
+}
+
+.avatar{
+position:relative;
+display:flex;
+flex-direction:column;
+align-items:center;
+transition:.5s;
+}
+
+.head{
+width:80px;
+height:80px;
+border-radius:50%;
+background:#f4c7a1;
+}
+
+.body{
+margin-top:5px;
+border-radius:20px;
+background:#60a5fa;
+}
+
+.leg-container{
+display:flex;
+gap:15px;
+}
+
+.leg{
+background:#334155;
+border-radius:20px;
+}
+
+.info{
+color:white;
+margin-top:20px;
+text-align:center;
+}
+
+@media(max-width:900px){
+.container{
+grid-template-columns:1fr;
+}
+}
+
 </style>
 </head>
-
 <body>
 
-<div id="logo">FutureFits</div>
+<div class="container">
 
-<script type="module">
+<div class="glass">
 
-import * as THREE from 'https://unpkg.com/three@0.166.1/build/three.module.js';
+<h1>FutureFits</h1>
 
-import { GLTFLoader } from 'https://unpkg.com/three@0.166.1/examples/jsm/loaders/GLTFLoader.js';
+<label>Nome</label>
+<input id="nome">
 
-import { OrbitControls } from 'https://unpkg.com/three@0.166.1/examples/jsm/controls/OrbitControls.js';
+<label>Gênero</label>
+<select id="genero">
+<option value="homem">Homem</option>
+<option value="mulher">Mulher</option>
+</select>
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x111111);
+<label>Altura (cm)</label>
+<input id="altura" type="number">
 
-const camera = new THREE.PerspectiveCamera(
-45,
-window.innerWidth/window.innerHeight,
-0.1,
-1000
-);
+<label>Peso (kg)</label>
+<input id="peso" type="number">
 
-camera.position.set(0,1.5,3);
+<label>Ombros (cm)</label>
+<input id="ombros" type="number">
 
-const renderer = new THREE.WebGLRenderer({
-antialias:true
-});
+<label>Cintura (cm)</label>
+<input id="cintura" type="number">
 
-renderer.setSize(window.innerWidth,window.innerHeight);
+<label>Quadril (cm)</label>
+<input id="quadril" type="number">
 
-document.body.appendChild(renderer.domElement);
+<button onclick="gerarAvatar()">
+Gerar Avatar
+</button>
 
-const light1 = new THREE.DirectionalLight(0xffffff,2);
-light1.position.set(5,5,5);
-scene.add(light1);
+</div>
 
-const light2 = new THREE.AmbientLight(0xffffff,1);
-scene.add(light2);
+<div class="glass preview">
 
-const controls = new OrbitControls(camera,renderer.domElement);
+<div>
 
-controls.enableDamping=true;
-controls.enablePan=false;
+<div class="avatar" id="avatar">
 
-const loader = new GLTFLoader();
+<div class="head"></div>
 
-loader.load(
-'avatar.glb',
+<div class="body" id="body"></div>
 
-function(gltf){
+<div class="leg-container">
+<div class="leg" id="leg1"></div>
+<div class="leg" id="leg2"></div>
+</div>
 
-const avatar = gltf.scene;
+</div>
 
-avatar.position.set(0,-1,0);
+<div class="info" id="info">
+Preencha os dados e clique em gerar.
+</div>
 
-scene.add(avatar);
+</div>
 
-},
+</div>
 
-undefined,
+</div>
 
-function(error){
-console.log(error);
+<script>
+
+function gerarAvatar(){
+
+const genero =
+document.getElementById('genero').value;
+
+const altura =
+Number(document.getElementById('altura').value);
+
+const peso =
+Number(document.getElementById('peso').value);
+
+const ombros =
+Number(document.getElementById('ombros').value);
+
+const cintura =
+Number(document.getElementById('cintura').value);
+
+const quadril =
+Number(document.getElementById('quadril').value);
+
+const body =
+document.getElementById('body');
+
+const leg1 =
+document.getElementById('leg1');
+
+const leg2 =
+document.getElementById('leg2');
+
+const escala =
+altura/170;
+
+let largura = ombros;
+
+if(genero==="mulher"){
+largura = quadril;
+body.style.background="#f472b6";
+}else{
+body.style.background="#60a5fa";
 }
-);
 
-function animate(){
+body.style.width =
+(Math.max(largura,40)*2)+"px";
 
-requestAnimationFrame(animate);
+body.style.height =
+(180*escala)+"px";
 
-controls.update();
+leg1.style.width="35px";
+leg2.style.width="35px";
 
-renderer.render(scene,camera);
+leg1.style.height=
+(120*escala)+"px";
+
+leg2.style.height=
+(120*escala)+"px";
+
+document.getElementById('info').innerHTML=
+`
+${genero.toUpperCase()}<br>
+${altura} cm<br>
+${peso} kg<br>
+Ombros: ${ombros} cm<br>
+Cintura: ${cintura} cm<br>
+Quadril: ${quadril} cm
+`;
 
 }
-
-animate();
-
-window.addEventListener('resize',()=>{
-
-camera.aspect =
-window.innerWidth/window.innerHeight;
-
-camera.updateProjectionMatrix();
-
-renderer.setSize(
-window.innerWidth,
-window.innerHeight
-);
-
-});
 
 </script>
 
